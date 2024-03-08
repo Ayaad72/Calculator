@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .row {
+            margin-bottom: 10px;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            width: 100px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .numeric-keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .numeric-keyboard button {
+            width: 100px;
+            height: 50px;
+            margin: 5px;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .numeric-keyboard button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Addition row -->
+        <div class="row">
+            <input type="number" id="addNum1">
+            +
+            <input type="number" id="addNum2" oninput="calculate()">
+            =
+            <input type="text" id="addResult" readonly>
+            <label>
+            </label>
+        </div>
+
+        <!-- Subtraction row -->
+        <div class="row">
+            <input type="text" id="subtractNum1" readonly value="">
+            -
+            <input type="text" id="subtractNum2" readonly value="">
+            =
+            <input type="text" id="subtractResult" readonly value="">
+            <label>
+            </label>
+        </div>
+
+        <!-- Multiplication row -->
+        <div class="row">
+            <input type="number" id="multiplyNum1" readonly>
+            ×
+            <input type="number" id="multiplyNum2" oninput="calculate()">
+            =
+            <input type="text" id="multiplyResult" readonly>
+            <label>
+            </label>
+        </div>
+        <div class="row">
+            <input type="checkbox" id="multiplyCheckbox" onclick="FindOperation(this)"> Multiply
+            <input type="checkbox" id="subtractCheckbox" onclick="FindOperation(this)"> Subtract
+            <input type="checkbox" id="addCheckbox" onclick="FindOperation(this)"> Add
+        </div>
+        <div class="numeric-keyboard">
+            <button onclick="appendToInput('1')">1</button>
+            <button onclick="appendToInput('2')">2</button>
+            <button onclick="appendToInput('3')">3</button>
+            <br>
+            <button onclick="appendToInput('4')">4</button>
+            <button onclick="appendToInput('5')">5</button>
+            <button onclick="appendToInput('6')">6</button>
+            <br>
+            <button onclick="appendToInput('7')">7</button>
+            <button onclick="appendToInput('8')">8</button>
+            <button onclick="appendToInput('9')">9</button>
+            <br>
+            <button onclick="appendToInput('0')">0</button>
+            <button onclick="clearAll()">Clear</button>
+        </div>
+    </div>
+    <script>
+        let clickCount = 0;
+        var doAddition = false;
+        var doSubtraction = false;
+        var doMultiplication = false;
+
+        function FindOperation(value) {
+            if (value.id == "subtractCheckbox") {
+                doSubtraction = true;
+                doAddition = false;
+                doMultiplication = false;
+            } else if (value.id == "addCheckbox") {
+                doSubtraction = false;
+                doAddition = true;
+                doMultiplication = false;
+            } else if (value.id == "multiplyCheckbox") {
+                doSubtraction = false;
+                doAddition = false;
+                doMultiplication = true;
+            }
+        }
+        function appendToInput(value) {
+            if (doSubtraction) {
+                if (document.getElementById('subtractNum1').value) {
+                    document.getElementById('subtractNum2').value = value;
+                } else {
+                    document.getElementById('subtractNum1').value = value;
+                }
+                calculate();
+            } else if (doAddition) {
+                if (document.getElementById('addNum1').value) {
+                    document.getElementById('addNum2').value = value;
+                } else {
+                    document.getElementById('addNum1').value = value;
+                }
+                calculate();
+            } else if (doMultiplication) {
+                if (document.getElementById('multiplyNum1').value) {
+                    document.getElementById('multiplyNum2').value = value;
+                } else {
+                    document.getElementById('multiplyNum1').value = value;
+                }
+                calculate();
+            }
+        }
+
+        function calculate() {
+            const num1 = parseFloat(document.getElementById('addNum1').value) || 0;
+            const num2 = parseFloat(document.getElementById('addNum2').value) || 0;
+            const addResult = document.getElementById('addResult');
+
+            const sub1 = parseFloat(document.getElementById('subtractNum1').value) || 0;
+            const sub2 = parseFloat(document.getElementById('subtractNum2').value) || 0;
+            const subtractResult = document.getElementById('subtractResult');
+
+            const mul1 = parseFloat(document.getElementById('multiplyNum1').value) || 0;
+            const mul2 = parseFloat(document.getElementById('multiplyNum2').value) || 0;
+            const multiplyResult = document.getElementById('multiplyResult');
+
+            if (doAddition) {
+                addResult.value = num1 + num2;
+            } else {
+                addResult.value = '';
+            }
+
+            if (doSubtraction) {
+                subtractResult.value = sub1 - sub2;
+            } else {
+                subtractResult.value = '';
+            }
+
+            if (doMultiplication) {
+                multiplyResult.value = mul1 * mul2;
+            } else {
+                multiplyResult.value = '';
+            }
+        }
+
+        function clearAll() {
+            // Clear all input fields
+            document.getElementById('addNum1').value = '';
+            document.getElementById('addNum2').value = '';
+            document.getElementById('addResult').value = '';
+            document.getElementById('subtractNum1').value = '';
+            document.getElementById('subtractNum2').value = '';
+            document.getElementById('subtractResult').value = '';
+            document.getElementById('multiplyNum1').value = '';
+            document.getElementById('multiplyNum2').value = '';
+            document.getElementById('multiplyResult').value = '';
+            // Uncheck all checkboxes
+            document.getElementById('multiplyCheckbox').checked = false;
+            document.getElementById('subtractCheckbox').checked = false;
+            document.getElementById('addCheckbox').checked = false;
+        }
+    </script>
+</body>
+
+</html>
